@@ -22,7 +22,7 @@ def row_to_book(row):
         end_date = date.fromisoformat(row["EndDate"])
        
     book = Book(row["Title"], row["Author"], row["Genre"], date.fromisoformat(row["StartDate"]), 
-                end_date, row["Quote"], row["Opinion"])
+                end_date, row["Quote"], row["Opinion"], row["BookID"])
     return book
     
 

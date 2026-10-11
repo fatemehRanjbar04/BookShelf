@@ -1,7 +1,8 @@
 from datetime import date
 
 class Book:
-    def __init__(self, title, author, genre, start_date, end_date=None, quote=None, opinion=None):
+    def __init__(self, title, author, genre, start_date, end_date=None, 
+                 quote=None, opinion=None, book_id=None):
         self.title = title
         self.author = author
         self.genre = genre
@@ -9,7 +10,12 @@ class Book:
         self.end_date = end_date
         self.quote = quote
         self.opinion = opinion
+        self._book_id = book_id
         
+    @property  
+    def book_id(self):
+        return self._book_id
+    
     @property
     def title(self):
         return self._title

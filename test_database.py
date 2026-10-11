@@ -1,6 +1,7 @@
-from database import add_book, get_all_books, connect_database
+from database import add_book, get_all_books, connect_database, row_to_book
 from datetime import date
 from book import Book
+import pytest
 
 def test_db_empty():
     database = connect_database(":memory:")
@@ -53,3 +54,39 @@ def test_add_with_order():
     assert len(books) == 2
     assert books[0].title == "book1"
     assert books[1].title == "book2"  
+    
+    
+
+def test_book_quote_and_opinion():
+    database = connect_database(":memory:")
+    book = Book("The Stranger", "Albert Camus", "Novel", date(2026, 2, 10), date(2026, 2, 17),
+                "Today, mother died", "Thoughtful")
+
+    add_book(database, book)
+    books = get_all_books(database)
+    assert len(books) == 1
+    assert books[0].quote == "Today, mother died"
+    assert books[0].opinion == "Thoughtful"
+
+
+def test_book_without_id():
+    book = Book("book1", "writer", "...", date(2026, 8, 29))
+    assert book.book_id is None
+
+
+def test_book_with_id():
+    book = Book("book1", "writer", "...", date(2026, 8, 29), book_id=5)
+    assert book.book_id == 5
+    
+    with pytest.raises(AttributeError):
+        book.book_id = 5
+
+def test_bookID():
+    database = connect_database(":memory:")
+    book = Book("book1", "writer", "...", date(2026, 8, 29))
+    add_book(database, book)
+    book = Book("book2", "writer2", "...", date(2026, 8, 30))
+    add_book(database, book)
+    books = get_all_books(database)
+    assert books[0].book_id == 1
+    assert books[1].book_id == 2
