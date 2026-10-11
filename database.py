@@ -27,19 +27,28 @@ def row_to_book(row):
     
 
 
-def add_book(db, book): 
+def add_book(database, book): 
     start = book.start_date.isoformat()
     end = None
     if book.end_date is not None:
         end = book.end_date.isoformat()
-    db.execute("""
+    database.execute("""
                INSERT INTO books(
                 Title, Author, Genre, StartDate, EndDate, Quote, Opinion) 
                 VALUES (?,?,?,?,?,?,?)"""
                ,(book.title, book.author, book.genre, start, end, book.quote, book.opinion)) 
     
-    db.commit()
+    database.commit()
              
 
+def get_all_books(database):
+    rows = database.execute("SELECT * FROM books ORDER BY BookID").fetchall()
+    books = [row_to_book(r) for r in rows]
+    return books
+        
 
-
+def connect_database(file):
+    database = sqlite3.connect(file)
+    create_table(database)
+    database.row_factory = sqlite3.Row
+    return database
