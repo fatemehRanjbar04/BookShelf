@@ -52,3 +52,30 @@ def connect_database(file):
     create_table(database)
     database.row_factory = sqlite3.Row
     return database
+
+
+def delete_book(database, book_id):
+    result = database.execute("DELETE FROM books WHERE BookID = ?", (book_id,))
+    database.commit()
+    if result.rowcount:
+        return True
+    else:
+        return False
+    
+def update_book(database, book):
+    start = book.start_date.isoformat()
+    end = None
+    if book.end_date is not None:
+        end = book.end_date.isoformat()
+        
+    update = database.execute("""UPDATE books SET Title = ?, Author = ?, Genre = ?, 
+                     StartDate = ?, EndDate = ?, Quote = ?, Opinion = ?
+                     WHERE BookID = ?""", (book.title, book.author, book.genre, start, 
+                                           end, book.quote, book.opinion, book.book_id))
+    
+    database.commit()
+    
+    if update.rowcount:
+        return True
+    else:
+        return False
