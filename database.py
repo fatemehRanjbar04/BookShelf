@@ -2,7 +2,6 @@ import sqlite3
 from datetime import date
 from book import Book
 
-
 def create_table(database):
     database.execute(
         "CREATE TABLE IF NOT EXISTS books("
@@ -26,6 +25,21 @@ def row_to_book(row):
                 end_date, row["Quote"], row["Opinion"])
     return book
     
+
+
+def add_book(db, book): 
+    start = book.start_date.isoformat()
+    end = None
+    if book.end_date is not None:
+        end = book.end_date.isoformat()
+    db.execute("""
+               INSERT INTO books(
+                Title, Author, Genre, StartDate, EndDate, Quote, Opinion) 
+                VALUES (?,?,?,?,?,?,?)"""
+               ,(book.title, book.author, book.genre, start, end, book.quote, book.opinion)) 
+    
+    db.commit()
+             
 
 
 
