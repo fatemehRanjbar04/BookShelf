@@ -142,7 +142,7 @@ def run_menu(database):
                     user_input = input(f"Are you sure you want to DELETE {book.title}? [Y/N]: ").strip().lower()
                     if user_input == "y":
                         if delete_book(database, book.book_id):
-                            print("₊˚⊹♡✧ Book Delete Successfully! ₊˚⊹♡✧")
+                            print("\n₊˚⊹♡✧ Book Delete Successfully! ₊˚⊹♡✧")
                 
             case "6":
                 books = get_all_books(database)
@@ -374,37 +374,50 @@ def edit_book(database, book):
             continue
         elif again == "n":
             update_book(database, book)
-            return "₊˚⊹♡✧ Your changes saved successfully! ₊˚⊹♡✧"        
+            print("\n₊˚⊹♡✧ Your changes saved successfully! ₊˚⊹♡✧")  
+            break    
  
  
-def show_statistics(year, books):  
-    n = number_of_finished_books_in_year(year, books)
-    ave = average_reading_days(books)
-    genres = favorite_genres(books)
-    genres_text = ", ".join(genres)
-    months = get_most_reading_month(books)
-    reading_months = []  
-    for m, title in months:
-        year, month = m
-        month_name = calendar.month_abbr[month]
-        n_books = len(title)
-        reading_months.append(f"{month_name} {year} ({n_books} books)")   
+def show_statistics(year, books): 
+    year_books = [b for b in books if b.is_finished() and b.end_date.year == year]
+    
+    if year_books == []:
+        print(f"You Haven't finished any books in {year}")
+        return
+    
+    n = len(year_books)
+    ave = average_reading_days(year_books)
+    genres = favorite_genres(year_books)
+    genre = ", ".join(genres)
+    months = get_most_reading_month(year_books)
         
-    busiest_month = ", ".join(reading_months)
-      
+    reading_months = []
+        
+    for month, title in months:  
+        y, m = month
+        month_name = calendar.month_abbr[m]
+        num_books = len(title)
+        reading_months.append(f"{month_name} {y} ({num_books} books)")
+   
+    most_reading_month = ", ".join(reading_months)
+                    
     print(f"""
 📊 Statistics for {year}
 ──────────────────────────────────────────────────────
-  Books finished        : {n}
-  Average reading time  : {ave} days
-  Favorite genre        : {genres_text}
-  Busiest month         : {busiest_month}
-  
-""")
-    r = random_quote(books) 
+Books finished        : {n}
+Average reading time  : {ave} days
+Favorite genre        : {genre}
+Busiest month         : {most_reading_month}
+                
+                """)           
+
+    r = random_quote(year_books) 
     if r is not None:
         author, quote = r 
-        print(f"    💬'{quote}'\n   — {author}")
+        print(f"    💬'{quote}'\n   — {author}") 
+            
+     
+
     
     
 if __name__ == "__main__":
