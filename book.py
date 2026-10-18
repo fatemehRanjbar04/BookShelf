@@ -39,7 +39,7 @@ class Book:
     @genre.setter
     def genre(self, genre):
         self.validation_str(genre)
-        self._genre = genre.strip()
+        self._genre = genre.strip().title()
         
         
     @property
