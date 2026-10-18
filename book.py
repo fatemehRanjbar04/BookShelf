@@ -22,7 +22,7 @@ class Book:
     @title.setter
     def title(self, title):
         self.validation_str(title)
-        self._title = title.strip()
+        self._title = title.strip().title()
         
     @property 
     def author(self):
@@ -30,7 +30,7 @@ class Book:
     @author.setter
     def author(self, author):
         self.validation_str(author)
-        self._author = author.strip()
+        self._author = author.strip().title()
         
         
     @property

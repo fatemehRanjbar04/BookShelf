@@ -26,12 +26,12 @@ def test_db_add():
     
 def test_db_add_without_end_date():
     database = connect_database(":memory:")
-    book = Book("The test", "Testify", "...", date(2026, 8, 29))
+    book = Book("The Test", "Testify", "...", date(2026, 8, 29))
     add_book(database, book)
     
     books = get_all_books(database)
     assert len(books) == 1
-    assert books[0].title == "The test"
+    assert books[0].title == "The Test"
     assert books[0].author == "Testify"
     assert books[0].genre == "..."
     assert books[0].start_date == date(2026, 8, 29)
@@ -43,17 +43,17 @@ def test_db_add_without_end_date():
 
 def test_add_with_order():
     database = connect_database(":memory:")
-    book = Book("book1", "writer", "...", date(2026, 8, 29))
+    book = Book("Book1", "Writer", "...", date(2026, 8, 29))
     add_book(database, book)
     
-    book = Book("book2", "writer2", "...", date(2026, 8, 30))
+    book = Book("Book2", "Writer2", "...", date(2026, 8, 30))
     add_book(database, book)
     
     books = get_all_books(database)
     
     assert len(books) == 2
-    assert books[0].title == "book1"
-    assert books[1].title == "book2"  
+    assert books[0].title == "Book1"
+    assert books[1].title == "Book2"  
     
     
 
@@ -70,12 +70,12 @@ def test_book_quote_and_opinion():
 
 
 def test_book_without_id():
-    book = Book("book1", "writer", "...", date(2026, 8, 29))
+    book = Book("Book1", "Writer", "...", date(2026, 8, 29))
     assert book.book_id is None
 
 
 def test_book_with_id():
-    book = Book("book1", "writer", "...", date(2026, 8, 29), book_id=5)
+    book = Book("Book1", "Writer", "...", date(2026, 8, 29), book_id=5)
     assert book.book_id == 5
     
     with pytest.raises(AttributeError):
