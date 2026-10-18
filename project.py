@@ -117,7 +117,7 @@ def run_menu(database):
                     
             case "2":
                 finish_book_flow(database)
-                print("\n୨୧ Press Enter To Continue ୨୧")
+                input("\n୨୧ Press Enter To Continue ୨୧")
                 
             case "3":
                 books = get_all_books(database)
@@ -132,21 +132,36 @@ def run_menu(database):
             case "4":
                 print("Which book do you want to edit?")
                 book = choose_book_to_edit(database)
-                edit_book(database, book)
+                if book:
+                    edit_book(database, book)
                 input("\n୨୧ Press Enter To Continue ୨୧")
                 
             case "5":
                 print("Which book do you want to delete?")
                 book = choose_book_to_edit(database)
                 if book:
-                    user_input = input(f"Are you sure you want to DELETE {book.title}? [Y/N]: ").strip().lower()
-                    if user_input == "y":
-                        if delete_book(database, book.book_id):
-                            print("\n₊˚⊹♡✧ Book Delete Successfully! ₊˚⊹♡✧")
+                    while True:
+                        user_input = input(f"Are you sure you want to DELETE {book.title}? [Y/N]: ").strip().lower()
+                        if user_input == "y":
+                            if delete_book(database, book.book_id):
+                                print("\n₊˚⊹♡✧ Book Delete Successfully! ₊˚⊹♡✧")
+                            break
+                        elif user_input == "n":
+                            print(f"\n₊˚⊹♡✧ Cancelled Deleting {book.title} ₊˚⊹♡✧")
+                            break
+                        else:
+                            print("Invalid!")
+                        
+                input("\n୨୧ Press Enter To Continue ୨୧")
                 
             case "6":
                 books = get_all_books(database)
-                year = int(input("Which year statistics do you want? "))
+                while True:
+                    try:
+                        year = int(input("Which year statistics do you want? "))
+                        break
+                    except ValueError:
+                        print("You need to enter year in numeric!")    
                 show_statistics(year, books)
                 input("\n୨୧ Press Enter To Continue ୨୧")
                   
@@ -326,15 +341,13 @@ def choose_book_to_edit(database):
             print("Wrong ID! Try Again...")
             continue
     else:
-        print("You don't have any books in this Library. Continue to add one...\n")
-        input("୨୧ Press Enter To Continue ୨୧")
- 
+        print("You don't have any books in this Library. Continue to add one...\n") 
     
 def edit_book(database, book):
     while True:
         print("💡What do you want to edit in this book? ")
-        valid_input = ["title", "author", "genre", "start date", "end date"]
-        edit = input("choose between:\ntitle, author, genre, start date, end date: ").lower()
+        valid_input = ["title", "author", "genre", "start date", "end date", "quote", "opinion"]
+        edit = input("choose between:\n(title, author, genre, start date, end date, quote, opinion): ").lower()
         
         if edit in valid_input:
             if edit == "title":
@@ -364,12 +377,22 @@ def edit_book(database, book):
                 end_date = ask_end_date('End date', book.start_date)
                 if end_date is not None:
                     book.end_date = end_date
+                    
+            elif edit == "quote":
+                quote = ask_optional_text('Quote')
+                if quote:
+                    book.quote = quote
+                
+            elif edit == "opinion":
+                opinion = ask_optional_text('Opinion')
+                if opinion:
+                    book.opinion = opinion
                 
         else:
             print("Invalid!! Try Again...")
             continue
 
-        again = input("Do you want to continue changing? [Y/N] ").lower()
+        again = input("Do you want to continue changing? [Y/N] ").lower().strip()
         if again == "y":
             continue
         elif again == "n":
@@ -382,7 +405,7 @@ def show_statistics(year, books):
     year_books = [b for b in books if b.is_finished() and b.end_date.year == year]
     
     if year_books == []:
-        print(f"You Haven't finished any books in {year}")
+        print(f"\nYou Haven't finished any books in {year}")
         return
     
     n = len(year_books)
@@ -393,10 +416,10 @@ def show_statistics(year, books):
         
     reading_months = []
         
-    for month, title in months:  
+    for month, titles in months:  
         y, m = month
         month_name = calendar.month_abbr[m]
-        num_books = len(title)
+        num_books = len(titles)
         reading_months.append(f"{month_name} {y} ({num_books} books)")
    
     most_reading_month = ", ".join(reading_months)
@@ -414,7 +437,7 @@ Busiest month         : {most_reading_month}
     r = random_quote(year_books) 
     if r is not None:
         author, quote = r 
-        print(f"    💬'{quote}'\n   — {author}") 
+        print(f"    💬'{quote}'\n       — {author}") 
             
      
 
